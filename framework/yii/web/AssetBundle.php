@@ -145,17 +145,20 @@ class AssetBundle extends Object
 	public function registerAssetFiles($view)
 	{
 		foreach ($this->js as $js) {
+            list($js, $jsOptions) = $js;
 			if (strpos($js, '/') !== 0 && strpos($js, '://') === false) {
-				$view->registerJsFile($this->baseUrl . '/' . $js, $this->jsOptions);
+				$view->registerJsFile($this->baseUrl . '/' . $js, $jsOptions);
 			} else {
-				$view->registerJsFile($js, $this->jsOptions);
+				$view->registerJsFile($js, $jsOptions);
 			}
 		}
 		foreach ($this->css as $css) {
+            $cssOptions = $css[1];
+            $css = $css[0];
 			if (strpos($css, '/') !== 0 && strpos($css, '://') === false) {
-				$view->registerCssFile($this->baseUrl . '/' . $css, $this->cssOptions);
+				$view->registerCssFile($this->baseUrl . '/' . $css, $cssOptions);
 			} else {
-				$view->registerCssFile($css, $this->cssOptions);
+				$view->registerCssFile($css, $cssOptions);
 			}
 		}
 	}
@@ -175,18 +178,28 @@ class AssetBundle extends Object
 		}
 		$converter = $am->getConverter();
 		foreach ($this->js as $i => $js) {
+            if(is_array($js)){
+                list($js, $jsOptions) = $js;
+            }else{
+                $jsOptions = $this->jsOptions;
+            }
 			if (strpos($js, '/') !== 0 && strpos($js, '://') === false) {
 				if (isset($this->basePath, $this->baseUrl)) {
-					$this->js[$i] = $converter->convert($js, $this->basePath, $this->baseUrl);
+					$this->js[$i] = [$converter->convert($js, $this->basePath, $this->baseUrl), $jsOptions];
 				} else {
 					throw new InvalidConfigException('Both of the "baseUrl" and "basePath" properties must be set.');
 				}
 			}
 		}
 		foreach ($this->css as $i => $css) {
+            if(is_array($css)){
+                list($css, $cssOptions) = $css;
+            }else{
+                $cssOptions = $this->cssOptions;
+            }
 			if (strpos($css, '/') !== 0 && strpos($css, '://') === false) {
 				if (isset($this->basePath, $this->baseUrl)) {
-					$this->css[$i] = $converter->convert($css, $this->basePath, $this->baseUrl);
+					$this->css[$i] = [$converter->convert($css, $this->basePath, $this->baseUrl), $cssOptions];
 				} else {
 					throw new InvalidConfigException('Both of the "baseUrl" and "basePath" properties must be set.');
 				}
