@@ -241,7 +241,9 @@ class BaseHtml
 	 */
 	public static function beginForm($action = '', $method = 'post', $options = [])
 	{
-		$action = static::url($action);
+		if ($action !== false) {
+			$action = static::url($action);
+		}
 
 		$hiddenInputs = [];
 
